@@ -1,9 +1,12 @@
+from schemas import Laptop
 from fastapi import FastAPI
+from pathlib import Path
 import sqlite3
 
 app = FastAPI()
 
-DATABASE = "backend/database/lims.db"
+BASE_DIR = Path(__file__).resolve().parent
+DATABASE = BASE_DIR / "database" / "lims.db"
 
 
 @app.get("/")
@@ -28,3 +31,35 @@ def get_laptops():
     conn.close()
 
     return [dict(row) for row in rows]
+
+@app.post("/laptops")
+def create_laptop(laptop: Laptop):
+
+    conn = sqlite3.connect(DATABASE)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO laptops
+        (brand, model, processor, ram, storage, price, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            laptop.brand,
+            laptop.model,
+            laptop.processor,
+            laptop.ram,
+            laptop.storage,
+            laptop.price,
+            laptop.status,
+        ),
+    )
+
+    conn.commit()
+
+    conn.close()
+
+    return {
+        "message": "Laptop added successfully"
+    }
