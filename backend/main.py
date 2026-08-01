@@ -1,3 +1,4 @@
+from crud import get_connection
 from schemas import Laptop
 from fastapi import FastAPI
 from pathlib import Path
@@ -18,7 +19,7 @@ def home():
 
 @app.get("/laptops")
 def get_laptops():
-    conn = sqlite3.connect(DATABASE)
+    conn = get_connection()
 
     conn.row_factory = sqlite3.Row
 
@@ -103,4 +104,29 @@ def update_laptop(laptop_id: int, laptop: Laptop):
 
     return {
         "message": "Laptop updated successfully"
+    }
+
+
+
+@app.delete("/laptops/{laptop_id}")
+def delete_laptop(laptop_id: int):
+
+    conn = sqlite3.connect(DATABASE)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM laptops
+        WHERE id = ?
+        """,
+        (laptop_id,)
+    )
+
+    conn.commit()
+
+    conn.close()
+
+    return {
+        "message": "Laptop deleted successfully"
     }
