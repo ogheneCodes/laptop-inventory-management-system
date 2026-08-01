@@ -63,3 +63,44 @@ def create_laptop(laptop: Laptop):
     return {
         "message": "Laptop added successfully"
     }
+
+
+@app.put("/laptops/{laptop_id}")
+def update_laptop(laptop_id: int, laptop: Laptop):
+
+    conn = sqlite3.connect(DATABASE)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE laptops
+        SET
+            brand=?,
+            model=?,
+            processor=?,
+            ram=?,
+            storage=?,
+            price=?,
+            status=?
+        WHERE id=?
+        """,
+        (
+            laptop.brand,
+            laptop.model,
+            laptop.processor,
+            laptop.ram,
+            laptop.storage,
+            laptop.price,
+            laptop.status,
+            laptop_id,
+        ),
+    )
+
+    conn.commit()
+
+    conn.close()
+
+    return {
+        "message": "Laptop updated successfully"
+    }
