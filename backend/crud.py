@@ -42,6 +42,8 @@ def get_all_laptops():
     return laptops
 
 
+##create a get function
+
 def get_laptop_by_id(laptop_id: int):
     conn = get_connection()
 
@@ -62,6 +64,8 @@ def get_laptop_by_id(laptop_id: int):
 
     return row
 
+
+##create a create function
 
 def create_laptop(laptop):
     conn = get_connection()
@@ -89,6 +93,8 @@ def create_laptop(laptop):
 
     conn.close()
 
+
+## create update function
 
 def update_laptop(laptop_id: int, laptop):
     conn = get_connection()
@@ -129,6 +135,8 @@ def update_laptop(laptop_id: int, laptop):
     return rows_updated
 
 
+## create  a  delete function
+
 def delete_laptop(laptop_id: int):
     conn = get_connection()
 
@@ -149,3 +157,35 @@ def delete_laptop(laptop_id: int):
     conn.close()
 
     return rows_deleted
+
+
+## create  a  search function
+
+def search_laptops(search: str):
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM laptops
+        WHERE brand LIKE ?
+           OR model LIKE ?
+        """,
+        (
+            f"%{search}%",
+            f"%{search}%"
+        ),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    laptops = []
+
+    for row in rows:
+        laptops.append(dict(row))
+
+    return laptops

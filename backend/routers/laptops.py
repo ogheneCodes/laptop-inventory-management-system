@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from crud import (
     get_all_laptops,
@@ -6,6 +6,7 @@ from crud import (
     create_laptop,
     update_laptop,
     delete_laptop,
+    search_laptops,
 )
 
 from schemas import Laptop
@@ -17,6 +18,9 @@ router = APIRouter()
 def get_laptops():
     return get_all_laptops()
 
+@router.get("/laptops/search")
+def search_laptops_route(q: str = Query(...)):
+    return search_laptops(q)
 
 @router.get("/laptops/{laptop_id}")
 def get_single_laptop(laptop_id: int):
@@ -72,3 +76,4 @@ def delete_laptop_route(laptop_id: int):
     return {
         "message": "Laptop deleted successfully"
     }
+
